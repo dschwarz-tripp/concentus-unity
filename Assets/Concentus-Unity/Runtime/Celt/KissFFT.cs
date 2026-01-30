@@ -55,7 +55,7 @@ namespace Concentus.Celt
         //internal const int TRIG_UPSCALE = 1;
 
         internal const int MAXFACTORS = 8;
-        
+
         internal static int S_MUL(int a, int b)
         {
             return Inlines.MULT16_32_Q15(b, a);
@@ -169,11 +169,11 @@ namespace Concentus.Celt
                     /* m is guaranteed to be a multiple of 4. */
                     for (j = 0; j < m; j++)
                     {
-                        scratch0 = (S_MUL(Fout[m1], st.twiddles[tw1    ]) - S_MUL(Fout[m1 + 1], st.twiddles[tw1 + 1]));
+                        scratch0 = (S_MUL(Fout[m1], st.twiddles[tw1]) - S_MUL(Fout[m1 + 1], st.twiddles[tw1 + 1]));
                         scratch1 = (S_MUL(Fout[m1], st.twiddles[tw1 + 1]) + S_MUL(Fout[m1 + 1], st.twiddles[tw1]));
-                        scratch2 = (S_MUL(Fout[m2], st.twiddles[tw2    ]) - S_MUL(Fout[m2 + 1], st.twiddles[tw2 + 1]));
+                        scratch2 = (S_MUL(Fout[m2], st.twiddles[tw2]) - S_MUL(Fout[m2 + 1], st.twiddles[tw2 + 1]));
                         scratch3 = (S_MUL(Fout[m2], st.twiddles[tw2 + 1]) + S_MUL(Fout[m2 + 1], st.twiddles[tw2]));
-                        scratch4 = (S_MUL(Fout[m3], st.twiddles[tw3    ]) - S_MUL(Fout[m3 + 1], st.twiddles[tw3 + 1]));
+                        scratch4 = (S_MUL(Fout[m3], st.twiddles[tw3]) - S_MUL(Fout[m3 + 1], st.twiddles[tw3 + 1]));
                         scratch5 = (S_MUL(Fout[m3], st.twiddles[tw3 + 1]) + S_MUL(Fout[m3 + 1], st.twiddles[tw3]));
                         scratch10 = Fout[fout_ptr] - scratch2;
                         scratch11 = Fout[fout_ptr + 1] - scratch3;
@@ -277,7 +277,7 @@ namespace Concentus.Celt
             int i, u;
             int scratch0, scratch1, scratch2, scratch3, scratch4, scratch5,
                 scratch6, scratch7, scratch8, scratch9, scratch10, scratch11,
-                scratch12,scratch13, scratch14, scratch15, scratch16, scratch17,
+                scratch12, scratch13, scratch14, scratch15, scratch16, scratch17,
                 scratch18, scratch19, scratch20, scratch21, scratch22, scratch23,
                 scratch24, scratch25;
 
@@ -305,13 +305,13 @@ namespace Concentus.Celt
                     scratch0 = Fout[Fout0 + 0];
                     scratch1 = Fout[Fout0 + 1];
 
-                    scratch2 = (S_MUL(Fout[Fout1 + 0], st.twiddles[tw1]) -     S_MUL(Fout[Fout1 + 1], st.twiddles[tw1 + 1]));
+                    scratch2 = (S_MUL(Fout[Fout1 + 0], st.twiddles[tw1]) - S_MUL(Fout[Fout1 + 1], st.twiddles[tw1 + 1]));
                     scratch3 = (S_MUL(Fout[Fout1 + 0], st.twiddles[tw1 + 1]) + S_MUL(Fout[Fout1 + 1], st.twiddles[tw1]));
-                    scratch4 = (S_MUL(Fout[Fout2 + 0], st.twiddles[tw2]) -     S_MUL(Fout[Fout2 + 1], st.twiddles[tw2 + 1]));
+                    scratch4 = (S_MUL(Fout[Fout2 + 0], st.twiddles[tw2]) - S_MUL(Fout[Fout2 + 1], st.twiddles[tw2 + 1]));
                     scratch5 = (S_MUL(Fout[Fout2 + 0], st.twiddles[tw2 + 1]) + S_MUL(Fout[Fout2 + 1], st.twiddles[tw2]));
-                    scratch6 = (S_MUL(Fout[Fout3 + 0], st.twiddles[tw3]) -     S_MUL(Fout[Fout3 + 1], st.twiddles[tw3 + 1]));
+                    scratch6 = (S_MUL(Fout[Fout3 + 0], st.twiddles[tw3]) - S_MUL(Fout[Fout3 + 1], st.twiddles[tw3 + 1]));
                     scratch7 = (S_MUL(Fout[Fout3 + 0], st.twiddles[tw3 + 1]) + S_MUL(Fout[Fout3 + 1], st.twiddles[tw3]));
-                    scratch8 = (S_MUL(Fout[Fout4 + 0], st.twiddles[tw4]) -     S_MUL(Fout[Fout4 + 1], st.twiddles[tw4 + 1]));
+                    scratch8 = (S_MUL(Fout[Fout4 + 0], st.twiddles[tw4]) - S_MUL(Fout[Fout4 + 1], st.twiddles[tw4 + 1]));
                     scratch9 = (S_MUL(Fout[Fout4 + 0], st.twiddles[tw4 + 1]) + S_MUL(Fout[Fout4 + 1], st.twiddles[tw4]));
 
                     tw1 += (2 * fstride);
@@ -429,27 +429,186 @@ namespace Concentus.Celt
         }
 
 
-        //internal static void opus_ifft(FFTState st, Pointer<int> fin, Pointer<int> fout)
-        //{
-        //    int i;
-        //    Inlines.OpusAssert(fin != fout, "In-place iFFT not supported");
+        internal static void opus_ifft(FFTState st, int[] fin, int[] fout)
+        {
+            int i;
+            Inlines.OpusAssert(fin != fout, "In-place iFFT not supported");
 
-        //    /* Bit-reverse the input */
-        //    for (i = 0; i < st.nfft * 2; i++)
-        //    {
-        //        fout[st.bitrev[i]] = fin[i];
-        //    }
+            /* Bit-reverse the input */
+            for (i = 0; i < st.nfft; i++)
+            {
+                fout[2 * st.bitrev[i]] = fin[2 * i];
+                fout[2 * st.bitrev[i] + 1] = fin[2 * i + 1];
+            }
 
-        //    for (i = 1; i < st.nfft * 2; i += 2)
-        //    {
-        //        fout[i] = -fout[i];
-        //    }
+            /* Negate imaginary part for inverse FFT */
+            for (i = 1; i < st.nfft * 2; i += 2)
+            {
+                fout[i] = -fout[i];
+            }
 
-        //    opus_fft_impl(st, fout.Data, fout.Offset);
+            opus_fft_impl(st, fout, 0);
 
-        //    for (i = 1; i < st.nfft * 2; i += 2)
-        //        fout[i] = -fout[i];
-        //}
+            /* Negate imaginary part again to complete inverse */
+            for (i = 1; i < st.nfft * 2; i += 2)
+                fout[i] = -fout[i];
+        }
+
+        /// <summary>
+        /// Forward FFT without Opus scaling (for MDF echo cancellation)
+        /// Unlike opus_fft, this does not pre-scale the input by 1/N
+        /// </summary>
+        internal static void opus_fft_unscaled(FFTState st, int[] fin, int[] fout)
+        {
+            int i;
+            Inlines.OpusAssert(fin != fout, "In-place FFT not supported");
+
+            /* Bit-reverse the input WITHOUT scaling */
+            for (i = 0; i < st.nfft; i++)
+            {
+                fout[2 * st.bitrev[i]] = fin[2 * i];
+                fout[2 * st.bitrev[i] + 1] = fin[2 * i + 1];
+            }
+
+            opus_fft_impl(st, fout, 0);
+        }
+
+        /// <summary>
+        /// Inverse FFT without Opus scaling semantics (for MDF echo cancellation)
+        /// Applies 1/N scaling at the output for proper normalization
+        /// </summary>
+        internal static void opus_ifft_unscaled(FFTState st, int[] fin, int[] fout)
+        {
+            int i;
+            Inlines.OpusAssert(fin != fout, "In-place iFFT not supported");
+
+            /* Bit-reverse the input without scaling */
+            for (i = 0; i < st.nfft; i++)
+            {
+                fout[2 * st.bitrev[i]] = fin[2 * i];
+                fout[2 * st.bitrev[i] + 1] = fin[2 * i + 1];
+            }
+
+            /* Negate imaginary part for inverse FFT */
+            for (i = 1; i < st.nfft * 2; i += 2)
+            {
+                fout[i] = -fout[i];
+            }
+
+            opus_fft_impl(st, fout, 0);
+
+            /* Negate imaginary part and apply 1/N scaling */
+            int scale = st.nfft;
+            for (i = 0; i < st.nfft; i++)
+            {
+                fout[2 * i] = fout[2 * i] / scale;
+                fout[2 * i + 1] = -fout[2 * i + 1] / scale;
+            }
+        }
+
+        /// <summary>
+        /// Compute power spectrum: ps[i] = real[i]^2 + imag[i]^2
+        /// </summary>
+        /// <param name="X">Complex FFT output (interleaved real/imag)</param>
+        /// <param name="ps">Power spectrum output</param>
+        /// <param name="N">FFT size (number of frequency bins)</param>
+        internal static void power_spectrum(Span<int> X, Span<int> ps, int N)
+        {
+            int i;
+            ps[0] = Inlines.MULT16_16(Inlines.EXTRACT16(Inlines.SHR32(X[0], 8)), Inlines.EXTRACT16(Inlines.SHR32(X[0], 8)));
+            for (i = 1; i < N - 1; i++)
+            {
+                int re = Inlines.EXTRACT16(Inlines.SHR32(X[2 * i], 8));
+                int im = Inlines.EXTRACT16(Inlines.SHR32(X[2 * i + 1], 8));
+                ps[i] = Inlines.MULT16_16(re, re) + Inlines.MULT16_16(im, im);
+            }
+            ps[N - 1] = Inlines.MULT16_16(Inlines.EXTRACT16(Inlines.SHR32(X[2 * (N - 1)], 8)),
+                                           Inlines.EXTRACT16(Inlines.SHR32(X[2 * (N - 1)], 8)));
+        }
+
+        /// <summary>
+        /// Compute power spectrum for unscaled FFT output: ps[i] = real[i]^2 + imag[i]^2
+        /// Uses 12-bit shift to handle unscaled FFT magnitude (shift_original + log2(N)/2 = 8 + 4)
+        /// </summary>
+        /// <param name="X">Complex FFT output (interleaved real/imag)</param>
+        /// <param name="ps">Power spectrum output</param>
+        /// <param name="N">FFT size (number of frequency bins)</param>
+        internal static void power_spectrum_unscaled(Span<int> X, Span<int> ps, int N)
+        {
+            int i;
+            ps[0] = Inlines.MULT16_16(Inlines.EXTRACT16(Inlines.SHR32(X[0], 12)), Inlines.EXTRACT16(Inlines.SHR32(X[0], 12)));
+            for (i = 1; i < N - 1; i++)
+            {
+                int re = Inlines.EXTRACT16(Inlines.SHR32(X[2 * i], 12));
+                int im = Inlines.EXTRACT16(Inlines.SHR32(X[2 * i + 1], 12));
+                ps[i] = Inlines.MULT16_16(re, re) + Inlines.MULT16_16(im, im);
+            }
+            ps[N - 1] = Inlines.MULT16_16(Inlines.EXTRACT16(Inlines.SHR32(X[2 * (N - 1)], 12)),
+                                           Inlines.EXTRACT16(Inlines.SHR32(X[2 * (N - 1)], 12)));
+        }
+
+        /// <summary>
+        /// Create FFT state for power-of-2 sizes (for MDF echo cancellation)
+        /// </summary>
+        /// <param name="size">FFT size (must be power of 2: 64, 128, 256, 512, 1024)</param>
+        /// <returns>FFT state structure</returns>
+        internal static FFTState create_fft_state(int size)
+        {
+            if (size != 64 && size != 128 && size != 256 && size != 512 && size != 1024)
+                throw new ArgumentException("FFT size must be power of 2 between 64 and 1024", nameof(size));
+
+            FFTState st = new FFTState();
+            st.nfft = size;
+            st.scale_shift = (int)Math.Ceiling(Math.Log(size, 2));
+            st.scale = (short)(1 << (15 - (st.scale_shift - 1)));
+            st.shift = 0;
+
+            // Factor the FFT size (power of 2 -> radix 2 or 4)
+            int nFactor = 0;
+            int n = size;
+            while (n > 1)
+            {
+                if ((n & 3) == 0) // divisible by 4
+                {
+                    st.factors[2 * nFactor] = 4;
+                    n >>= 2;
+                }
+                else // divisible by 2
+                {
+                    st.factors[2 * nFactor] = 2;
+                    n >>= 1;
+                }
+                st.factors[2 * nFactor + 1] = (short)n;
+                nFactor++;
+            }
+
+            // Generate bit-reversal table
+            st.bitrev = new short[size];
+            for (int i = 0; i < size; i++)
+            {
+                int rev = 0;
+                int tmp = i;
+                int bits = (int)Math.Log(size, 2);
+                for (int j = 0; j < bits; j++)
+                {
+                    rev = (rev << 1) | (tmp & 1);
+                    tmp >>= 1;
+                }
+                st.bitrev[i] = (short)rev;
+            }
+
+            // Generate twiddle factors
+            int nTwiddles = size;
+            st.twiddles = new short[2 * nTwiddles];
+            for (int i = 0; i < nTwiddles; i++)
+            {
+                double phase = -2.0 * Math.PI * i / size;
+                st.twiddles[2 * i] = (short)(32767.0 * Math.Cos(phase) + 0.5);
+                st.twiddles[2 * i + 1] = (short)(32767.0 * Math.Sin(phase) + 0.5);
+            }
+
+            return st;
+        }
     }
 }
 
